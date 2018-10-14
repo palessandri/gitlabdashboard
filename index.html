@@ -1,0 +1,45 @@
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+<div ng-app="myApp" ng-controller="myCtrl"> 
+
+<table class="table table-bordered" >
+<tr>
+    <th>ID</th>
+	<th>Título</th>
+	<th>Estado</th>
+	<th>Tiempo estimado</th>
+	<th>Tiempo requerido</th>
+</tr>
+<tr ng-repeat="issue in filteredIssues">
+    <td>{{ issue.id }}</td>
+	<td>{{ issue.title }}</td>
+	<td>{{ issue.state }}</td>
+	<td>{{ issue.time_stats.time_estimate / 3600 }}hs</td>
+	<td>{{ issue.time_stats.total_time_spent / 3600 }}hs</td>
+</tr>
+</table>
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $http) {
+    $http.get("https://gitlab.com/api/v4/issues?private_token=HzWWzeHrizRfsyNLGkCo&scope=all")//&state=opened&labels=Doing
+    .then(function(response) {
+        
+		var filteredIssues=[];
+		/*allIssues = response.data;
+		
+		for(i=0;i<allIssues.length;i++){
+			filteredIssues[i]["id"]=allIssues[i]["id"];
+			/*filteredIssues[i]["title"]=allIssues[i]["title"];
+			filteredIssues[i]["state"]=allIssues[i]["state"];
+			filteredIssues[i]["time_estimate"]=allIssues[i]["time_estimate"];
+			filteredIssues[i]["total_time_spent"]=allIssues[i]["total_time_spent"];
+		}
+		*/
+		filteredIssues = response.data;
+		$scope.filteredIssues = filteredIssues;
+    });
+});
+</script>
