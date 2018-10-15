@@ -2,44 +2,66 @@
 
 <div ng-app="myApp" ng-controller="myCtrl"> 
 
-<table class="table table-bordered" >
-<tr>
-    <th>ID</th>
-	<th>Título</th>
-	<th>Estado</th>
-	<th>Tiempo estimado</th>
-	<th>Tiempo requerido</th>
-</tr>
-<tr ng-repeat="issue in filteredIssues">
-    <td>{{ issue.id }}</td>
-	<td>{{ issue.title }}</td>
-	<td>{{ issue.state }}</td>
-	<td>{{ issue.time_stats.time_estimate / 3600 }}hs</td>
-	<td>{{ issue.time_stats.total_time_spent / 3600 }}hs</td>
-</tr>
-</table>
+<div ng-repeat="project in filteredProjects">
+	<b>ID: </b>{{ project.id }}<br>
+	<b>Nombre: </b>{{ project.name }}<br>
+	<b>Descripción: </b>{{ project.description }}<br>
+
+	<table class="table table-bordered">
+	<tr>
+		<th>ID</th>
+		<th>Nombre</th>
+		<th>Descripción</th>
+	</tr>
+	<tr ng-repeat="issue in allFilteredIssues">
+		<td>{{ project.id }}</td>
+		<td>{{ project.title }}</td>
+		<td>{{ project.state }}</td>
+	</tr>
+	</table>
+
+</div>
 
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 <script>
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope, $http) {
-    $http.get("https://gitlab.com/api/v4/issues?private_token=HzWWzeHrizRfsyNLGkCo&scope=all")//&state=opened&labels=Doing
-    .then(function(response) {
+    $http.get("https://gitlab.com/api/v4/projects?private_token=HzWWzeHrizRfsyNLGkCo&owned=true")
+    .then(function(projectsResponse) {
         
-		var filteredIssues=[];
-		/*allIssues = response.data;
+		var filteredProjects = [];
+		var filteredIssues = [];
 		
-		for(i=0;i<allIssues.length;i++){
-			filteredIssues[i]["id"]=allIssues[i]["id"];
-			/*filteredIssues[i]["title"]=allIssues[i]["title"];
-			filteredIssues[i]["state"]=allIssues[i]["state"];
-			filteredIssues[i]["time_estimate"]=allIssues[i]["time_estimate"];
-			filteredIssues[i]["total_time_spent"]=allIssues[i]["total_time_spent"];
+		allProjects = projectsResponse.data;
+		
+		for(i=0;i<allProjects.length;i++){
+			var project = {};	
+			var projectID = allProjects[i]["id"];
+			$http.get("https://gitlab.com/api/v4/projects/" + projectID + "/issues?private_token=HzWWzeHrizRfsyNLGkCo")
+			.then(function(issuesResponse) {
+				filteredIssues = [];
+				allIssues = issuesResponse.data;
+				for(j=0;j<allIssues.length;j++){
+					var issue = {};
+					issue["id"] = allIssues[j]["id"];
+					issue["title"] = allIssues[j]["title"];
+					issue["state"] = allIssues[j]["state"];
+					filteredIssues.push(issue);
+				}
+			});
+
+			project["id"] = allProjects[i]["id"];
+			project["name"] = allProjects[i]["name"];
+			project["description"] = allProjects[i]["description"];
+			project["issues"] = filteredIssues;
+			
+			filteredProjects.push(project);
+			
 		}
-		*/
-		filteredIssues = response.data;
-		$scope.filteredIssues = filteredIssues;
+
+		console.log(filteredProjects);
+		$scope.filteredProjects = filteredProjects;
     });
 });
 </script>
