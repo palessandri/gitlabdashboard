@@ -1,0 +1,20 @@
+.circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+	display: inline-block;
+	}
+
+	.high {
+    	background: rgb(255, 0, 0);
+	}
+	.medium {
+    	background: rgb(255, 255, 0);
+	}
+	.low {
+    	background: rgb(0, 255, 0);
+	}
+
+	.table td{
+		text-align: center;
+	}
